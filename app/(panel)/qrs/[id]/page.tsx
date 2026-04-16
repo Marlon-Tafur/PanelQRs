@@ -18,6 +18,9 @@ export default async function QrDetailPage({
     include: {
       redirectVersions: {
         orderBy: { versionNumber: "desc" },
+        include: {
+          _count: { select: { scanLogs: true } },
+        },
       },
       _count: { select: { scanLogs: true } },
     },

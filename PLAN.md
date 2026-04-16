@@ -9,7 +9,7 @@
 ## Estado actual
 
 ```
-Fase activa: 3 — Versionado de redirecciones
+Fase activa: 4 — Endpoint público + scan logs
 Última actualización: 2026-04-16
 ```
 
@@ -22,7 +22,7 @@ Fase activa: 3 — Versionado de redirecciones
 | 0 | Setup del proyecto | ✅ Completa |
 | 1 | Auth — login mínimo | ✅ Completa |
 | 2 | Núcleo de QRs (CRUD) | ✅ Completa |
-| 3 | Versionado de redirecciones | ⬜ Pendiente |
+| 3 | Versionado de redirecciones | ✅ Completa |
 | 4 | Endpoint público + scan logs | ⬜ Pendiente |
 | 5 | Analítica básica | ⬜ Pendiente |
 | 6 | Personalización visual del QR | ⬜ Pendiente |
@@ -138,14 +138,14 @@ Lee la lógica crítica de cambio de redirección en CLAUDE.md antes de implemen
 
 ### Tareas
 
-- [ ] Implementar `POST /api/qrs/:id/redirect-version`
+- [x] Implementar `POST /api/qrs/:id/redirect-version`
   - Cierra la versión actual (`isCurrent = false`, `endedAt = now()`)
   - Crea nueva versión (`isCurrent = true`, `versionNumber = n+1`)
-- [ ] Implementar `GET /api/qrs/:id/redirect-versions`
-- [ ] Mostrar historial de versiones en el detalle del QR:
+- [x] Implementar `GET /api/qrs/:id/redirect-versions`
+- [x] Mostrar historial de versiones en el detalle del QR:
   - Tabla con: versión, destino, fecha inicio, fecha fin, escaneos
-- [ ] Formulario de "Cambiar destino" en el detalle del QR con campo de nueva URL y nota opcional
-- [ ] Validar que la nueva URL comience con `http://` o `https://` y no apunte a `/r/:slug` propio
+- [x] Formulario de "Cambiar destino" en el detalle del QR con campo de nueva URL y nota opcional
+- [x] Validar que la nueva URL comience con `http://` o `https://` y no apunte a `/r/:slug` propio
 
 ### Entregables
 - Cambio de destino funcional

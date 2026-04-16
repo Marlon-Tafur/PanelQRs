@@ -6,6 +6,17 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import {
   Table,
@@ -24,6 +35,7 @@ type RedirectVersion = {
   startedAt: Date | string;
   endedAt: Date | string | null;
   changeNote: string | null;
+  _count: { scanLogs: number };
 };
 
 type QrWithVersions = {
@@ -51,6 +63,13 @@ export function QrDetail({ qr: initialQr }: Props) {
   const [togglingStatus, setTogglingStatus] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  // Estado del Dialog de cambio de redirección
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [newUrl, setNewUrl] = useState("");
+  const [changeNote, setChangeNote] = useState("");
+  const [redirectError, setRedirectError] = useState<string | null>(null);
+  const [savingRedirect, setSavingRedirect] = useState(false);
+
   const currentVersion = qr.redirectVersions.find((v) => v.isCurrent);
 
   async function handleToggleStatus() {
@@ -75,6 +94,35 @@ export function QrDetail({ qr: initialQr }: Props) {
     await navigator.clipboard.writeText(qr.shortUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  }
+
+  async function handleChangeRedirect() {
+    setRedirectError(null);
+    setSavingRedirect(true);
+    try {
+      const res = await fetch(`/api/qrs/${qr.id}/redirect-version`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          destinationUrl: newUrl.trim(),
+          changeNote: changeNote.trim() || undefined,
+        }),
+      });
+
+      if (res.ok) {
+        setDialogOpen(false);
+        setNewUrl("");
+        setChangeNote("");
+        router.refresh();
+      } else {
+        const data = await res.json();
+        setRedirectError(data.error ?? "Error al guardar el cambio");
+      }
+    } catch {
+      setRedirectError("Error de red. Intentá de nuevo.");
+    } finally {
+      setSavingRedirect(false);
+    }
   }
 
   function formatDate(date: Date | string) {
@@ -155,7 +203,7 @@ export function QrDetail({ qr: initialQr }: Props) {
           </CardContent>
         </Card>
 
-        {/* Placeholder visual QR + redirección actual */}
+        {/* Imagen QR + redirección actual */}
         <div className="space-y-6">
           <Card>
             <CardHeader>
@@ -174,7 +222,63 @@ export function QrDetail({ qr: initialQr }: Props) {
 
           <Card>
             <CardHeader>
-              <CardTitle>Redirección actual</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle>Redirección actual</CardTitle>
+                <Dialog open={dialogOpen} onOpenChange={(open) => {
+                  setDialogOpen(open);
+                  if (!open) {
+                    setNewUrl("");
+                    setChangeNote("");
+                    setRedirectError(null);
+                  }
+                }}>
+                  <DialogTrigger className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+                    Cambiar destino
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Cambiar destino del QR</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-2">
+                      <div className="space-y-1.5">
+                        <Label htmlFor="new-url">Nueva URL de destino</Label>
+                        <Input
+                          id="new-url"
+                          type="url"
+                          placeholder="https://ejemplo.com/nueva-pagina"
+                          value={newUrl}
+                          onChange={(e) => setNewUrl(e.target.value)}
+                          disabled={savingRedirect}
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="change-note">
+                          Nota del cambio{" "}
+                          <span className="text-muted-foreground font-normal">(opcional)</span>
+                        </Label>
+                        <Textarea
+                          id="change-note"
+                          placeholder="Ej: Campaña de verano 2026"
+                          value={changeNote}
+                          onChange={(e) => setChangeNote(e.target.value)}
+                          disabled={savingRedirect}
+                        />
+                      </div>
+                      {redirectError && (
+                        <p className="text-sm text-destructive">{redirectError}</p>
+                      )}
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        onClick={handleChangeRedirect}
+                        disabled={savingRedirect || !newUrl.trim()}
+                      >
+                        {savingRedirect ? "Guardando..." : "Guardar cambio"}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </CardHeader>
             <CardContent>
               {currentVersion ? (
@@ -210,17 +314,32 @@ export function QrDetail({ qr: initialQr }: Props) {
               <TableRow>
                 <TableHead>Versión</TableHead>
                 <TableHead>URL de destino</TableHead>
+                <TableHead>Nota</TableHead>
                 <TableHead>Estado</TableHead>
                 <TableHead>Inicio</TableHead>
                 <TableHead>Fin</TableHead>
+                <TableHead className="text-right">Escaneos</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {qr.redirectVersions.map((version) => (
-                <TableRow key={version.id}>
+                <TableRow
+                  key={version.id}
+                  className={cn(version.isCurrent && "bg-muted/40")}
+                >
                   <TableCell>v{version.versionNumber}</TableCell>
-                  <TableCell className="max-w-xs truncate text-sm">
-                    {version.destinationUrl}
+                  <TableCell className="max-w-xs">
+                    <span
+                      className="block truncate text-sm"
+                      title={version.destinationUrl}
+                    >
+                      {version.destinationUrl}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground max-w-[160px]">
+                    <span className="block truncate" title={version.changeNote ?? ""}>
+                      {version.changeNote ?? "—"}
+                    </span>
                   </TableCell>
                   <TableCell>
                     <Badge
@@ -234,6 +353,9 @@ export function QrDetail({ qr: initialQr }: Props) {
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {version.endedAt ? formatDate(version.endedAt) : "—"}
+                  </TableCell>
+                  <TableCell className="text-right font-medium">
+                    {version._count.scanLogs}
                   </TableCell>
                 </TableRow>
               ))}
