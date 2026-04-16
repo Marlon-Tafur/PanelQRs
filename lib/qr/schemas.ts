@@ -26,6 +26,23 @@ export const changeRedirectSchema = z.object({
   changeNote: z.string().max(500).optional(),
 });
 
+const hexColorRegex = /^#(?:[0-9a-fA-F]{6})$/;
+
+export const updateAppearanceSchema = z.object({
+  primaryColor: z.string().regex(hexColorRegex, "Color primario invalido (usa formato #RRGGBB)"),
+  backgroundColor: z.string().regex(hexColorRegex, "Color de fondo invalido (usa formato #RRGGBB)"),
+  logoFileUrl: z
+    .string()
+    .max(500)
+    .optional()
+    .nullable()
+    .transform((value) => {
+      if (!value) return null;
+      return value;
+    }),
+});
+
 export type CreateQrInput = z.infer<typeof createQrSchema>;
 export type UpdateQrInput = z.infer<typeof updateQrSchema>;
 export type ChangeRedirectInput = z.infer<typeof changeRedirectSchema>;
+export type UpdateAppearanceInput = z.infer<typeof updateAppearanceSchema>;

@@ -9,7 +9,7 @@
 ## Estado actual
 
 ```
-Fase activa: 6 — Personalización visual del QR
+Fase activa: 7 — Pulido y cierre
 Última actualización: 2026-04-16
 ```
 
@@ -25,7 +25,7 @@ Fase activa: 6 — Personalización visual del QR
 | 3 | Versionado de redirecciones | ✅ Completa |
 | 4 | Endpoint público + scan logs | ✅ Completa |
 | 5 | Analítica básica | ✅ Completa |
-| 6 | Personalización visual del QR | ⬜ Pendiente |
+| 6 | Personalización visual del QR | ✅ Completa |
 | 7 | Pulido y cierre | ⬜ Pendiente |
 
 ---
@@ -227,19 +227,19 @@ Valida que el contraste entre primaryColor y backgroundColor sea suficiente.
 
 ### Tareas
 
-- [ ] Instalar `qrcode` y `sharp`
-- [ ] Función `generateQrAssets(qrCode)` en `/lib/qr/generator.ts`:
+- [x] Instalar `qrcode` y `sharp`
+- [x] Función `generateQrAssets(qrCode)` en `/lib/qr/generator.ts`:
   - Genera SVG base con color primario y fondo
   - Si hay logo: lo inserta centrado (máx 25% del área)
   - Guarda PNG y SVG en storage
   - Actualiza `qrPngUrl` y `qrSvgUrl` en DB
-- [ ] Implementar `PATCH /api/qrs/:id/appearance`
+- [x] Implementar `PATCH /api/qrs/:id/appearance`
   - Actualiza colores y logoFileUrl
   - Llama a `generateQrAssets()` y actualiza URLs
-- [ ] Implementar `GET /api/qrs/:id/download/png` y `.../svg`
-- [ ] Upload de logo: validar que sea imagen (PNG/JPG/SVG), máx 500KB
-- [ ] En el detalle del QR: modal de personalización con previsualización en tiempo real
-- [ ] Validar contraste: si luminancia del fondo y foreground es similar, mostrar advertencia
+- [x] Implementar `GET /api/qrs/:id/download/png` y `.../svg`
+- [x] Upload de logo: validar que sea imagen (PNG/JPG/SVG), máx 500KB
+- [x] En el detalle del QR: modal de personalización con previsualización en tiempo real
+- [x] Validar contraste: si luminancia del fondo y foreground es similar, mostrar advertencia
 
 ### Entregables
 - QR personalizable con color y logo

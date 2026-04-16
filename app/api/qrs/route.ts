@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
 import { createQrSchema } from "@/lib/qr/schemas";
 import { generateSlug, buildShortUrl } from "@/lib/qr/helpers";
+import { generateQrAssets } from "@/lib/qr/generator";
 
 export async function GET() {
   const session = await getSession();
@@ -94,5 +95,26 @@ export async function POST(request: NextRequest) {
     return qrCode;
   });
 
-  return NextResponse.json(result, { status: 201 });
+  try {
+    const generated = await generateQrAssets({
+      qrId: result.id,
+      shortUrl: result.shortUrl,
+      primaryColor: result.primaryColor,
+      backgroundColor: result.backgroundColor,
+      logoFileUrl: result.logoFileUrl,
+    });
+
+    const updated = await prisma.qrCode.update({
+      where: { id: result.id },
+      data: {
+        qrPngUrl: generated.qrPngUrl,
+        qrSvgUrl: generated.qrSvgUrl,
+      },
+    });
+
+    return NextResponse.json(updated, { status: 201 });
+  } catch (err) {
+    console.error("[POST /api/qrs] qr-asset-generation", err);
+    return NextResponse.json(result, { status: 201 });
+  }
 }
