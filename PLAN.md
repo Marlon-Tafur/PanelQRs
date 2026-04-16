@@ -57,7 +57,7 @@ Solo deja el proyecto configurado y corriendo.
 - [x] Crear archivo `.env.example` con las variables requeridas
 - [x] Crear layout base del panel (sidebar + contenido)
 - [x] Crear estructura de carpetas según CLAUDE.md
-- [ ] Ejecutar `prisma migrate dev` y verificar conexión
+- [x] Ejecutar `prisma migrate dev` y verificar conexión
 
 > ⚠️ Pendiente: ejecutar `npx prisma migrate dev` después de configurar DATABASE_URL en .env.local
 
