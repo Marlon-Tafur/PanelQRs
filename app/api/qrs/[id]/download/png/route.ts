@@ -1,8 +1,7 @@
-import fs from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { getQrWithAssets } from "@/lib/qr/assets";
-import { resolvePublicFilePath } from "@/lib/storage/local";
+import { readBinaryFileByStoredUrl } from "@/lib/storage";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -28,13 +27,12 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
       return NextResponse.json({ error: "QR no encontrado" }, { status: 404 });
     }
 
-    const filePath = resolvePublicFilePath(qr.qrPngUrl ?? "");
-    if (!filePath) {
+    if (!qr.qrPngUrl) {
       return NextResponse.json({ error: "No hay PNG disponible" }, { status: 404 });
     }
 
-    const content = await fs.readFile(filePath);
-    return new NextResponse(content, {
+    const { buffer } = await readBinaryFileByStoredUrl(qr.qrPngUrl);
+    return new NextResponse(new Uint8Array(buffer), {
       status: 200,
       headers: {
         "Content-Type": "image/png",

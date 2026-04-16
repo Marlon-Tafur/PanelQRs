@@ -1,7 +1,6 @@
-import fs from "fs/promises";
 import { prisma } from "@/lib/db/prisma";
-import { resolvePublicFilePath } from "@/lib/storage/local";
 import { generateQrAssets } from "@/lib/qr/generator";
+import { storedUrlExists } from "@/lib/storage";
 
 type QrAssetRecord = {
   id: string;
@@ -13,21 +12,6 @@ type QrAssetRecord = {
   qrPngUrl: string | null;
   qrSvgUrl: string | null;
 };
-
-async function fileExistsFromPublicUrl(publicUrl: string | null): Promise<boolean> {
-  if (!publicUrl) return false;
-  if (!publicUrl.startsWith("/")) return false;
-
-  const filePath = resolvePublicFilePath(publicUrl);
-  if (!filePath) return false;
-
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 export async function getQrWithAssets(qrId: string): Promise<QrAssetRecord | null> {
   const qr = await prisma.qrCode.findUnique({
@@ -46,8 +30,8 @@ export async function getQrWithAssets(qrId: string): Promise<QrAssetRecord | nul
 
   if (!qr) return null;
 
-  const hasPng = await fileExistsFromPublicUrl(qr.qrPngUrl);
-  const hasSvg = await fileExistsFromPublicUrl(qr.qrSvgUrl);
+  const hasPng = await storedUrlExists(qr.qrPngUrl);
+  const hasSvg = await storedUrlExists(qr.qrSvgUrl);
   if (hasPng && hasSvg) return qr;
 
   const generated = await generateQrAssets({

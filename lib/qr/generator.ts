@@ -1,8 +1,7 @@
-import fs from "fs/promises";
 import path from "path";
 import QRCode from "qrcode";
 import sharp from "sharp";
-import { resolveStorageRoot, toPublicUrl } from "@/lib/storage/local";
+import { readBinaryFileByStoredUrl, uploadBinaryFile } from "@/lib/storage";
 
 const QR_PNG_SIZE = 1024;
 const LOGO_SIDE_RATIO = 0.45; // 20.25% area of QR
@@ -128,32 +127,16 @@ function withSvgLogo(baseSvg: string, logoDataUri: string): string {
   return baseSvg.replace("</svg>", `${overlay}\n</svg>`);
 }
 
-function inferMimeTypeFromPath(filePath: string): string {
-  const ext = path.extname(filePath).toLowerCase();
-  if (ext === ".png") return "image/png";
-  if (ext === ".jpg" || ext === ".jpeg") return "image/jpeg";
-  if (ext === ".svg") return "image/svg+xml";
-  return "application/octet-stream";
-}
-
 async function loadLogoBuffer(logoFileUrl: string): Promise<{ buffer: Buffer; mimeType: string }> {
-  if (/^https?:\/\//i.test(logoFileUrl)) {
-    const response = await fetch(logoFileUrl);
-    if (!response.ok) {
-      throw new Error("LOGO_FETCH_FAILED");
-    }
-    const arrayBuffer = await response.arrayBuffer();
-    const mimeType = response.headers.get("content-type") ?? "application/octet-stream";
-    return { buffer: Buffer.from(arrayBuffer), mimeType };
-  }
-
-  if (!logoFileUrl.startsWith("/")) {
+  if (!/^https?:\/\//i.test(logoFileUrl) && !logoFileUrl.startsWith("/")) {
     throw new Error("INVALID_LOGO_URL");
   }
 
-  const absolutePath = path.resolve(/*turbopackIgnore: true*/ process.cwd(), "public", logoFileUrl.slice(1));
-  const buffer = await fs.readFile(absolutePath);
-  return { buffer, mimeType: inferMimeTypeFromPath(absolutePath) };
+  try {
+    return await readBinaryFileByStoredUrl(logoFileUrl);
+  } catch {
+    throw new Error("LOGO_FETCH_FAILED");
+  }
 }
 
 export async function generateQrAssets(input: GenerateQrAssetsInput): Promise<GenerateQrAssetsResult> {
@@ -200,25 +183,22 @@ export async function generateQrAssets(input: GenerateQrAssetsInput): Promise<Ge
       .toBuffer();
   }
 
-  const storageRoot = resolveStorageRoot();
-  const qrDir = path.join(storageRoot, "qrs", input.qrId);
-  await fs.mkdir(qrDir, { recursive: true });
-
   const timestamp = Date.now();
-  const pngFilePath = path.join(qrDir, `qr-${timestamp}.png`);
-  const svgFilePath = path.join(qrDir, `qr-${timestamp}.svg`);
+  const pngObjectPath = path.posix.join("qrs", input.qrId, `qr-${timestamp}.png`);
+  const svgObjectPath = path.posix.join("qrs", input.qrId, `qr-${timestamp}.svg`);
 
-  await Promise.all([
-    fs.writeFile(pngFilePath, qrPngBuffer),
-    fs.writeFile(svgFilePath, Buffer.from(qrSvgFinal, "utf-8")),
+  const [qrPngUrl, qrSvgUrl] = await Promise.all([
+    uploadBinaryFile({
+      objectPath: pngObjectPath,
+      content: qrPngBuffer,
+      contentType: "image/png",
+    }),
+    uploadBinaryFile({
+      objectPath: svgObjectPath,
+      content: Buffer.from(qrSvgFinal, "utf-8"),
+      contentType: "image/svg+xml",
+    }),
   ]);
-
-  const qrPngUrl = toPublicUrl(pngFilePath);
-  const qrSvgUrl = toPublicUrl(svgFilePath);
-
-  if (!qrPngUrl || !qrSvgUrl) {
-    throw new Error("STORAGE_OUTSIDE_PUBLIC");
-  }
 
   return {
     qrPngUrl,

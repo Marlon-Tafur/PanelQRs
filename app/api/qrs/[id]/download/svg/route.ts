@@ -1,8 +1,7 @@
-import fs from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { getQrWithAssets } from "@/lib/qr/assets";
-import { resolvePublicFilePath } from "@/lib/storage/local";
+import { readBinaryFileByStoredUrl } from "@/lib/storage";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -28,13 +27,12 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
       return NextResponse.json({ error: "QR no encontrado" }, { status: 404 });
     }
 
-    const filePath = resolvePublicFilePath(qr.qrSvgUrl ?? "");
-    if (!filePath) {
+    if (!qr.qrSvgUrl) {
       return NextResponse.json({ error: "No hay SVG disponible" }, { status: 404 });
     }
 
-    const content = await fs.readFile(filePath, "utf-8");
-    return new NextResponse(content, {
+    const { buffer } = await readBinaryFileByStoredUrl(qr.qrSvgUrl);
+    return new NextResponse(buffer.toString("utf-8"), {
       status: 200,
       headers: {
         "Content-Type": "image/svg+xml; charset=utf-8",

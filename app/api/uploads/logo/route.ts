@@ -1,8 +1,6 @@
-import fs from "fs/promises";
-import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { resolveStorageRoot, toPublicUrl } from "@/lib/storage/local";
+import { uploadBinaryFile } from "@/lib/storage";
 
 const MAX_LOGO_SIZE = 500 * 1024;
 const ALLOWED_MIME_TYPES = new Set(["image/png", "image/jpeg", "image/svg+xml"]);
@@ -39,24 +37,15 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const storageRoot = resolveStorageRoot();
-    const logosDir = path.join(storageRoot, "logos");
-    await fs.mkdir(logosDir, { recursive: true });
-
     const extension = extensionFromMimeType(file.type);
     const fileName = `logo-${Date.now()}-${Math.random().toString(36).slice(2, 8)}${extension}`;
-    const filePath = path.join(logosDir, fileName);
 
     const arrayBuffer = await file.arrayBuffer();
-    await fs.writeFile(filePath, Buffer.from(arrayBuffer));
-
-    const fileUrl = toPublicUrl(filePath);
-    if (!fileUrl) {
-      return NextResponse.json(
-        { error: "STORAGE_PATH debe apuntar a una ruta local dentro de /public" },
-        { status: 500 }
-      );
-    }
+    const fileUrl = await uploadBinaryFile({
+      objectPath: `logos/${fileName}`,
+      content: Buffer.from(arrayBuffer),
+      contentType: file.type,
+    });
 
     return NextResponse.json({ fileUrl });
   } catch (err) {
