@@ -9,7 +9,7 @@
 ## Estado actual
 
 ```
-Fase activa: 4 — Endpoint público + scan logs
+Fase activa: 5 — Analítica básica
 Última actualización: 2026-04-16
 ```
 
@@ -23,7 +23,7 @@ Fase activa: 4 — Endpoint público + scan logs
 | 1 | Auth — login mínimo | ✅ Completa |
 | 2 | Núcleo de QRs (CRUD) | ✅ Completa |
 | 3 | Versionado de redirecciones | ✅ Completa |
-| 4 | Endpoint público + scan logs | ⬜ Pendiente |
+| 4 | Endpoint público + scan logs | ✅ Completa |
 | 5 | Analítica básica | ⬜ Pendiente |
 | 6 | Personalización visual del QR | ⬜ Pendiente |
 | 7 | Pulido y cierre | ⬜ Pendiente |
@@ -167,12 +167,12 @@ El scan log DEBE incluir redirect_version_id del momento del escaneo.
 
 ### Tareas
 
-- [ ] Implementar `GET /r/:slug` siguiendo el flujo exacto de CLAUDE.md
-- [ ] Registrar `QrScanLog` con: `qrCodeId`, `redirectVersionId`, `scannedAt`, `userAgent`, `ipHash`
-- [ ] Hash de IP: usar SHA256 simple (no guardar IP cruda)
-- [ ] Si QR pausado: devolver página simple "Este QR está temporalmente deshabilitado"
-- [ ] Si slug no existe: devolver 404
-- [ ] Verificar que en el detalle del QR el contador de escaneos se actualiza
+- [x] Implementar `GET /r/:slug` siguiendo el flujo exacto de CLAUDE.md
+- [x] Registrar `QrScanLog` con: `qrCodeId`, `redirectVersionId`, `scannedAt`, `userAgent`, `ipHash`
+- [x] Hash de IP: usar SHA256 simple (no guardar IP cruda)
+- [x] Si QR pausado: devolver página simple "Este QR está temporalmente deshabilitado"
+- [x] Si slug no existe: devolver 404
+- [x] Verificar que en el detalle del QR el contador de escaneos se actualiza
 
 ### Entregables
 - Escaneo real funcional (se puede probar con el teléfono)
