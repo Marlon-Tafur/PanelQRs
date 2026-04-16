@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model QrCode {
+  id              String              @id @default(cuid())
+  name            String
+  slug            String              @unique
+  shortUrl        String
+  isActive        Boolean             @default(true)
+  description     String?
+  primaryColor    String              @default("#000000")
+  backgroundColor String              @default("#FFFFFF")
+  logoFileUrl     String?
+  qrPngUrl        String?
+  qrSvgUrl        String?
+  createdBy       String
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  redirectVersions QrRedirectVersion[]
+  scanLogs        QrScanLog[]
+}
+
+model QrRedirectVersion {
+  id             String     @id @default(cuid())
+  qrCodeId       String
+  versionNumber  Int
+  destinationUrl String
+  isCurrent      Boolean    @default(false)
+  startedAt      DateTime   @default(now())
+  endedAt        DateTime?
+  createdBy      String
+  changeNote     String?
+  qrCode         QrCode     @relation(fields: [qrCodeId], references: [id])
+  scanLogs       QrScanLog[]
+}
+
+model QrScanLog {
+  id                String            @id @default(cuid())
+  qrCodeId          String
+  redirectVersionId String
+  scannedAt         DateTime          @default(now())
+  userAgent         String?
+  referer           String?
+  ipHash            String?
+  qrCode            QrCode            @relation(fields: [qrCodeId], references: [id])
+  redirectVersion   QrRedirectVersion @relation(fields: [redirectVersionId], references: [id])
+}
