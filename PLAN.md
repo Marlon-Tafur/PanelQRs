@@ -9,8 +9,8 @@
 ## Estado actual
 
 ```
-Fase activa: 0 — Configuración inicial
-Última actualización: —
+Fase activa: 1 — Auth mínimo
+Última actualización: 2026-04-15
 ```
 
 ---
@@ -19,7 +19,7 @@ Fase activa: 0 — Configuración inicial
 
 | Fase | Nombre | Estado |
 |---|---|---|
-| 0 | Setup del proyecto | ⬜ Pendiente |
+| 0 | Setup del proyecto | ✅ Completa |
 | 1 | Auth — login mínimo | ⬜ Pendiente |
 | 2 | Núcleo de QRs (CRUD) | ⬜ Pendiente |
 | 3 | Versionado de redirecciones | ⬜ Pendiente |
@@ -49,15 +49,17 @@ Solo deja el proyecto configurado y corriendo.
 
 ### Tareas
 
-- [ ] Crear proyecto Next.js 14 con App Router y TypeScript
-- [ ] Configurar Tailwind CSS
-- [ ] Instalar y configurar shadcn/ui
-- [ ] Configurar Prisma con PostgreSQL
-- [ ] Crear schema.prisma con las 4 tablas del modelo de datos (User, QrCode, QrRedirectVersion, QrScanLog)
-- [ ] Crear archivo `.env.example` con las variables requeridas
-- [ ] Crear layout base del panel (sidebar + contenido)
-- [ ] Crear estructura de carpetas según CLAUDE.md
+- [x] Crear proyecto Next.js 14 con App Router y TypeScript
+- [x] Configurar Tailwind CSS
+- [x] Instalar y configurar shadcn/ui
+- [x] Configurar Prisma con PostgreSQL
+- [x] Crear schema.prisma con las 4 tablas del modelo de datos (User, QrCode, QrRedirectVersion, QrScanLog)
+- [x] Crear archivo `.env.example` con las variables requeridas
+- [x] Crear layout base del panel (sidebar + contenido)
+- [x] Crear estructura de carpetas según CLAUDE.md
 - [ ] Ejecutar `prisma migrate dev` y verificar conexión
+
+> ⚠️ Pendiente: ejecutar `npx prisma migrate dev` después de configurar DATABASE_URL en .env.local
 
 ### Entregables
 - Proyecto corre localmente en `localhost:3000`
