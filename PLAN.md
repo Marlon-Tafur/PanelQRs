@@ -9,7 +9,7 @@
 ## Estado actual
 
 ```
-Fase activa: 5 — Analítica básica
+Fase activa: 6 — Personalización visual del QR
 Última actualización: 2026-04-16
 ```
 
@@ -24,7 +24,7 @@ Fase activa: 5 — Analítica básica
 | 2 | Núcleo de QRs (CRUD) | ✅ Completa |
 | 3 | Versionado de redirecciones | ✅ Completa |
 | 4 | Endpoint público + scan logs | ✅ Completa |
-| 5 | Analítica básica | ⬜ Pendiente |
+| 5 | Analítica básica | ✅ Completa |
 | 6 | Personalización visual del QR | ⬜ Pendiente |
 | 7 | Pulido y cierre | ⬜ Pendiente |
 
@@ -194,17 +194,17 @@ Usa agregaciones Prisma. No crear tablas adicionales.
 
 ### Tareas
 
-- [ ] Implementar `GET /api/qrs/:id/stats`
+- [x] Implementar `GET /api/qrs/:id/stats`
   - Total escaneos del QR
   - Escaneos por versión de redirección
   - Escaneos por fecha (últimos 30 días)
-- [ ] Implementar `GET /api/dashboard/summary`
+- [x] Implementar `GET /api/dashboard/summary`
   - Total QRs, QRs activos, QRs pausados
   - Escaneos totales, escaneos últimos 7 días
   - Top 5 QRs por escaneos
-- [ ] Dashboard con KPIs en tarjetas
-- [ ] En el detalle del QR: tabla de escaneos por versión + gráfico de barras
-- [ ] Filtro básico por rango de fechas en el detalle
+- [x] Dashboard con KPIs en tarjetas
+- [x] En el detalle del QR: tabla de escaneos por versión + gráfico de barras
+- [x] Filtro básico por rango de fechas en el detalle
 
 ### Entregables
 - Dashboard con KPIs reales
