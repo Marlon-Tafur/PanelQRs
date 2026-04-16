@@ -110,13 +110,13 @@ El QR visual aún puede ser placeholder — se completa en Fase 6.
 
 ### Tareas
 
-- [ ] Implementar `GET /api/qrs` y `POST /api/qrs`
-- [ ] Implementar `GET /api/qrs/:id`, `PATCH /api/qrs/:id`, `PATCH /api/qrs/:id/status`
-- [ ] Generar slug único (nanoid de 8 chars o similar)
-- [ ] Al crear un QR, crear automáticamente la primera `QrRedirectVersion` con `isCurrent = true`
-- [ ] Pantalla listado de QRs con columnas: nombre, slug, destino actual, estado, escaneos, acciones
-- [ ] Pantalla detalle de QR con datos generales y redirección actual
-- [ ] Botones activar / pausar en listado y detalle
+- [x] Implementar `GET /api/qrs` y `POST /api/qrs`
+- [x] Implementar `GET /api/qrs/:id`, `PATCH /api/qrs/:id`, `PATCH /api/qrs/:id/status`
+- [x] Generar slug único (nanoid de 8 chars o similar)
+- [x] Al crear un QR, crear automáticamente la primera `QrRedirectVersion` con `isCurrent = true`
+- [x] Pantalla listado de QRs con columnas: nombre, slug, destino actual, estado, escaneos, acciones
+- [x] Pantalla detalle de QR con datos generales y redirección actual
+- [x] Botones activar / pausar en listado y detalle
 
 ### Entregables
 - CRUD de QRs funcional
