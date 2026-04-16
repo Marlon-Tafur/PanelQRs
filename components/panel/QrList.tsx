@@ -49,6 +49,19 @@ type Props = {
   initialQrs: QrWithRelations[];
 };
 
+function isValidHttpUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function isValidSlug(value: string): boolean {
+  return /^[a-z0-9-]{4,40}$/i.test(value);
+}
+
 export function QrList({ initialQrs }: Props) {
   const router = useRouter();
   const [qrs, setQrs] = useState<QrWithRelations[]>(initialQrs);
@@ -70,13 +83,28 @@ export function QrList({ initialQrs }: Props) {
     setFormError(null);
     setCreating(true);
 
+    const trimmedName = formName.trim();
+    const trimmedUrl = formUrl.trim();
+
+    if (trimmedName.length < 2) {
+      setFormError("El nombre debe tener al menos 2 caracteres.");
+      setCreating(false);
+      return;
+    }
+
+    if (!isValidHttpUrl(trimmedUrl)) {
+      setFormError("La URL debe iniciar con http:// o https://.");
+      setCreating(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/qrs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: formName,
-          destinationUrl: formUrl,
+          name: trimmedName,
+          destinationUrl: trimmedUrl,
           description: formDescription || undefined,
         }),
       });
@@ -224,6 +252,11 @@ export function QrList({ initialQrs }: Props) {
                     <code className="text-xs bg-muted px-1 py-0.5 rounded">
                       {qr.slug}
                     </code>
+                    {!isValidSlug(qr.slug) && (
+                      <p className="text-[11px] text-amber-600 mt-1">
+                        Slug fuera de formato esperado
+                      </p>
+                    )}
                   </TableCell>
                   <TableCell className="max-w-xs truncate text-sm text-muted-foreground">
                     {current?.destinationUrl ?? "—"}

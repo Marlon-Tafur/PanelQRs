@@ -9,7 +9,7 @@
 ## Estado actual
 
 ```
-Fase activa: 7 — Pulido y cierre
+Fase activa: MVP completado (Fases 0-7)
 Última actualización: 2026-04-16
 ```
 
@@ -26,7 +26,7 @@ Fase activa: 7 — Pulido y cierre
 | 4 | Endpoint público + scan logs | ✅ Completa |
 | 5 | Analítica básica | ✅ Completa |
 | 6 | Personalización visual del QR | ✅ Completa |
-| 7 | Pulido y cierre | ⬜ Pendiente |
+| 7 | Pulido y cierre | ✅ Completa |
 
 ---
 
@@ -261,15 +261,15 @@ Genera el reporte final.
 
 ### Tareas
 
-- [ ] Revisar todos los criterios de aceptación del CLAUDE.md
-- [ ] Agregar mensajes de error claros en formularios (toast o inline)
-- [ ] Validaciones UI: slugs, URLs, colores hex, tamaño de logo
-- [ ] Pantalla de gestión de usuarios (crear, editar, activar/desactivar, cambiar contraseña)
-- [ ] Revisar que no haya rutas sin protección
-- [ ] Limpiar console.log y código de debug
-- [ ] Crear README.md con: setup local, variables de entorno, comandos de deploy
-- [ ] Generar seed completo con datos de ejemplo para demostración
-- [ ] Reporte final: listar archivos creados, decisiones tomadas, pendientes para v2
+- [x] Revisar todos los criterios de aceptación del CLAUDE.md
+- [x] Agregar mensajes de error claros en formularios (toast o inline)
+- [x] Validaciones UI: slugs, URLs, colores hex, tamaño de logo
+- [x] Pantalla de gestión de usuarios (crear, editar, activar/desactivar, cambiar contraseña)
+- [x] Revisar que no haya rutas sin protección
+- [x] Limpiar console.log y código de debug
+- [x] Crear README.md con: setup local, variables de entorno, comandos de deploy
+- [x] Generar seed completo con datos de ejemplo para demostración
+- [x] Reporte final: listar archivos creados, decisiones tomadas, pendientes para v2
 
 ### Entregables
 - MVP funcional y presentable
@@ -299,3 +299,5 @@ Genera el reporte final.
 | — | Hash SHA256 de IP en logs | Privacidad mínima sin complejidad |
 | — | No usar 301 nunca en `/r/:slug` | El destino cambia frecuentemente |
 | — | `iron-session` para sesiones | Simple, sin dependencias pesadas |
+| 2026-04-16 | Gestión de usuarios en panel y API privadas | Cerrar criterios MVP de administración básica |
+| 2026-04-16 | Storage productivo en Supabase Storage | Evitar dependencia de filesystem efímero en Vercel |

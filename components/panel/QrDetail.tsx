@@ -117,6 +117,19 @@ function formatNumber(value: number): string {
   return new Intl.NumberFormat("es-PE").format(value);
 }
 
+function isValidHttpUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function isValidSlug(value: string): boolean {
+  return /^[a-z0-9-]{4,40}$/i.test(value);
+}
+
 function hexToRgb(hexColor: string): { r: number; g: number; b: number } | null {
   const normalized = hexColor.replace("#", "");
   if (!/^[0-9a-fA-F]{6}$/.test(normalized)) return null;
@@ -152,6 +165,10 @@ function getContrastRatio(primaryColor: string, backgroundColor: string): number
   const lighter = Math.max(luminanceA, luminanceB);
   const darker = Math.min(luminanceA, luminanceB);
   return (lighter + 0.05) / (darker + 0.05);
+}
+
+function isValidHexColor(value: string): boolean {
+  return /^#[0-9a-fA-F]{6}$/.test(value);
 }
 
 export function QrDetail({ qr: initialQr }: Props) {
@@ -315,13 +332,20 @@ export function QrDetail({ qr: initialQr }: Props) {
 
   async function handleChangeRedirect() {
     setRedirectError(null);
+    const trimmedUrl = newUrl.trim();
+
+    if (!isValidHttpUrl(trimmedUrl)) {
+      setRedirectError("La URL debe iniciar con http:// o https://.");
+      return;
+    }
+
     setSavingRedirect(true);
     try {
       const res = await fetch(`/api/qrs/${qr.id}/redirect-version`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          destinationUrl: newUrl.trim(),
+          destinationUrl: trimmedUrl,
           changeNote: changeNote.trim() || undefined,
         }),
       });
@@ -403,6 +427,12 @@ export function QrDetail({ qr: initialQr }: Props) {
 
   async function handleSaveAppearance() {
     setAppearanceError(null);
+
+    if (!isValidHexColor(appearancePrimaryColor) || !isValidHexColor(appearanceBackgroundColor)) {
+      setAppearanceError("Los colores deben tener formato #RRGGBB.");
+      return;
+    }
+
     setSavingAppearance(true);
 
     try {
@@ -479,6 +509,9 @@ export function QrDetail({ qr: initialQr }: Props) {
             <div>
               <p className="text-sm text-muted-foreground">Slug</p>
               <code className="text-sm bg-muted px-2 py-1 rounded">{qr.slug}</code>
+              {!isValidSlug(qr.slug) && (
+                <p className="text-[11px] text-amber-600 mt-1">Slug fuera de formato esperado</p>
+              )}
             </div>
             <div>
               <p className="text-sm text-muted-foreground mb-1">URL corta</p>
