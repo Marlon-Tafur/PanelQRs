@@ -9,8 +9,8 @@
 ## Estado actual
 
 ```
-Fase activa: 1 — Auth mínimo
-Última actualización: 2026-04-15
+Fase activa: 2 — Núcleo de QRs
+Última actualización: 2026-04-16
 ```
 
 ---
@@ -20,7 +20,7 @@ Fase activa: 1 — Auth mínimo
 | Fase | Nombre | Estado |
 |---|---|---|
 | 0 | Setup del proyecto | ✅ Completa |
-| 1 | Auth — login mínimo | ⬜ Pendiente |
+| 1 | Auth — login mínimo | ✅ Completa |
 | 2 | Núcleo de QRs (CRUD) | ⬜ Pendiente |
 | 3 | Versionado de redirecciones | ⬜ Pendiente |
 | 4 | Endpoint público + scan logs | ⬜ Pendiente |
@@ -81,13 +81,13 @@ Protege todas las rutas bajo /(panel) con middleware.
 
 ### Tareas
 
-- [ ] Instalar `bcryptjs` e `iron-session` (o next-auth con credentials provider)
-- [ ] Implementar `POST /api/auth/login` (validar email, comparar hash, crear sesión)
-- [ ] Implementar `POST /api/auth/logout`
-- [ ] Crear pantalla de login (`/login`)
-- [ ] Crear middleware que proteja rutas bajo `/(panel)`
-- [ ] Crear seed básico con usuario de prueba
-- [ ] Verificar que sin sesión redirige a `/login`
+- [x] Instalar `bcryptjs` e `iron-session` (o next-auth con credentials provider)
+- [x] Implementar `POST /api/auth/login` (validar email, comparar hash, crear sesión)
+- [x] Implementar `POST /api/auth/logout`
+- [x] Crear pantalla de login (`/login`)
+- [x] Crear middleware que proteja rutas bajo `/(panel)`
+- [x] Crear seed básico con usuario de prueba
+- [x] Verificar que sin sesión redirige a `/login`
 
 ### Entregables
 - Login funcional

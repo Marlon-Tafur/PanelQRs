@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import { LayoutDashboard, QrCode, Users } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { LayoutDashboard, QrCode, Users, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -9,6 +12,13 @@ const navItems = [
 ];
 
 export function Sidebar() {
+  const router = useRouter();
+
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+  }
+
   return (
     <aside className="w-64 border-r bg-card flex flex-col">
       <div className="p-6 border-b">
@@ -33,6 +43,19 @@ export function Sidebar() {
           </Link>
         ))}
       </nav>
+      <div className="p-4 border-t">
+        <button
+          onClick={handleLogout}
+          className={cn(
+            "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium",
+            "text-muted-foreground hover:text-foreground hover:bg-accent",
+            "transition-colors"
+          )}
+        >
+          <LogOut className="h-4 w-4" />
+          Cerrar sesión
+        </button>
+      </div>
     </aside>
   );
 }
