@@ -944,15 +944,24 @@ export function QrDetail({ qr: initialQr }: Props) {
 
             <div className="space-y-2">
               <p className="text-sm font-medium">Previsualizacion en tiempo real</p>
-              <div className="w-64 h-64 rounded-md border mx-auto flex items-center justify-center bg-muted/20 relative overflow-hidden">
+              <div className="mx-auto w-full max-w-[280px] aspect-square rounded-md border bg-muted/20 relative overflow-hidden p-3">
                 {appearancePreviewDataUrl ? (
                   <>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={appearancePreviewDataUrl} alt="Previsualizacion QR" className="w-56 h-56" />
+                    <img
+                      src={appearancePreviewDataUrl}
+                      alt="Previsualizacion QR"
+                      className="w-full h-full object-contain"
+                    />
                     {previewLogo && (
-                      <div className="absolute w-24 h-24 bg-white rounded-xl flex items-center justify-center p-2 shadow">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={previewLogo} alt="Logo" className="w-full h-full object-contain" />
+                      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                        <div
+                          className="w-[30%] h-[30%] rounded-xl flex items-center justify-center p-[5%] shadow-sm border border-white/60"
+                          style={{ backgroundColor: appearanceBackgroundColor }}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={previewLogo} alt="Logo" className="w-full h-full object-contain" />
+                        </div>
                       </div>
                     )}
                   </>
