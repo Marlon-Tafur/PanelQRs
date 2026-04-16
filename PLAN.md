@@ -9,7 +9,7 @@
 ## Estado actual
 
 ```
-Fase activa: 2 — Núcleo de QRs
+Fase activa: 3 — Versionado de redirecciones
 Última actualización: 2026-04-16
 ```
 
@@ -21,7 +21,7 @@ Fase activa: 2 — Núcleo de QRs
 |---|---|---|
 | 0 | Setup del proyecto | ✅ Completa |
 | 1 | Auth — login mínimo | ✅ Completa |
-| 2 | Núcleo de QRs (CRUD) | ⬜ Pendiente |
+| 2 | Núcleo de QRs (CRUD) | ✅ Completa |
 | 3 | Versionado de redirecciones | ⬜ Pendiente |
 | 4 | Endpoint público + scan logs | ⬜ Pendiente |
 | 5 | Analítica básica | ⬜ Pendiente |
